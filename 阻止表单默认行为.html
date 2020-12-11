@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/bootstrap.css">
+    <script src="../../js/jquery-3.5.1.js"></script>
+    <style>
+        span {
+            padding-top: 20px;
+        }
+    </style>
+</head>
+
+<body style="padding: 15px ;">
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">发表评论</h3>
+        </div>
+        <div class="panel-body">
+            <form action="" id="form1" method="POST">
+                <div>发表人：</div>
+                <input type="text" name="username" class="form-control">
+                <div>发表内容</div>
+                <textarea type="text" name="contant" class="form-control"></textarea>
+                <button type="submit" class="btn">发表</button>
+            </form>
+        </div>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+            <span class="badge">评论时间</span>
+            <span class="badge">评论人</span>
+            <div id="plnr">
+            </div>
+        </li>
+    </ul>
+    <script>
+        $.get('http://www.liulongbin.top:3006/api/cmtlist', function (res) {
+
+
+
+
+            var row = []
+            $.each(res.data, function (i, item) {
+                var jm = item.username
+                var jmm = decodeURI(jm)
+                console.log(jmm);
+                var xiao = item.content.replace(/%/g, '%25')
+                var xiaojie = decodeURI(xiao)
+                console.log(xiao);
+
+                row.push('<li class="list-group-item"><span class="badge">评论时间:' + item.time + '</span><span class="badge">评论人:' + jmm + '</span><div id="plnr">' + xiaojie + ' </div></li>')
+            })
+            $(".list-group").empty().append(row.join(''))
+        })
+        $("#form1").on('submit', function (e) {
+            var ss = $(this).serialize()
+            var one = ss.indexOf('=')
+            var two = ss.lastIndexOf('=')
+            var aa = ss.substr(one + 1, two - 17)
+            var bb = ss.substr(one + 14, two)
+
+            e.preventDefault()
+
+            // console.log(one + "   " + two);
+            // console.log(aa);
+            // console.log(bb);
+
+            // console.log(ss)
+            $.ajax({
+                url: 'http://www.liulongbin.top:3006/api/addcmt',
+                method: 'post',
+                data: { username: aa, content: bb },
+                success: function (res) {
+                    // $(".list-group").append('<li class="list-group-item"><span class="badge">评论时间'++'</span><span class="badge">评论人:' + aa + '</span><div id="plnr">' + bb + ' </div></li>')
+
+                }
+            })
+        })
+
+    </script>
+</body>
+
+</html>
